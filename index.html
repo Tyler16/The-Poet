@@ -1,0 +1,44 @@
+<html>
+    <head>
+        <script>
+            async function poem_req() {
+                let author = document.getElementById("author").value;
+                let title = document.getElementById("title").value;
+                let data = "";
+                document.getElementById("res").innerHTML = "";
+                try {
+                    let response = await fetch("https://poetrydb.org/author,title/" + author + ";" + title);
+                    if (!response.ok) {
+                        throw new Error("GET request failed");
+                    }
+                    data = await response.json();
+                    if ("status" in data && data.status != "200" && data.status != 200) {
+                        throw new Error("GET request failed");
+                    }
+                } catch (error) {
+                    throw error;
+                }
+                console.log(data)
+                for (i in data) {
+                    document.getElementById("res").innerHTML += "<br>Poem " + i;
+                    document.getElementById("res").innerHTML += "<br>Author: " + data[i].author;
+                    document.getElementById("res").innerHTML += "<br>Title: " + data[i].title;
+                    document.getElementById("res").innerHTML += "<br>Line Count: " + data[i].linecount
+                    document.getElementById("res").innerHTML += "<br>Poem:<br>";
+                    for (j in data[i].lines) {
+                        document.getElementById("res").innerHTML += "<br>" + data[i].lines[j];
+                    }
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <label for="author">Author:</label>
+        <input type="text" id="author" name="author">
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title">
+
+        <button onclick="poem_req()">Make Request</button>
+        <p id="res"></p>
+    </body>
+</html>
